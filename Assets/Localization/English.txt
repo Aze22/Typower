@@ -1,0 +1,122 @@
+MainMenu = [AAFFFF]Main Menu
+
+Bomb = [AAFFFF]Bomb
+BombTooltip = Explodes all\nenemies at once
+Time = [AAFFFF]Time
+TimeTooltip = Slows Time\nfor 10 seconds
+
+Powers = [AAFFFF]Powers
+Available = [AAFFFF]Available
+Selected = [AAFFFF]Selected
+
+EnterName = Name
+Nickname = [AAFFFF]Nickname
+Difficulty = [AAFFFF]Difficulty
+Volume = [AAFFFF]Volume
+Sound = [AAFFFF]Sound
+Enabled = Enabled
+
+Play = Play
+Exit = Exit
+Options = Options
+Language = [AAFFFF]Language
+Ok = [22FF55]Ok
+Close = Close
+
+WelcomeMessage = [99FF99]Welcome![FFFFFF]\n\nYou can Select one of two [AAFFFF]Powers[FFFFFF]:\n[AAFFAA]Bomb[FFFFFF]: Explodes all enemies at once\n[AAFFAA]Time[FFFFFF]: Slows Time for 10 seconds
+
+Instructions = [22FF55]Drag\nPower-Up here
+
+Normal = Normal
+Hard = Hard
+
+English = English
+French = Français
+
+NicknameNotification = [AAFFFF]Please Enter a [00FFAA]Nickname[AAFFFF] before you continue!
+PowerNotification = [AAFFFF]Please Select a [00FFAA]Power-Up[AAFFFF] before you continue!
+
+//Game
+Barrier = [99FF99]Barrier
+BuildingBarrier = [FF7766]Building...
+Wait = [FFBB22]Wait
+
+BarrierAvailableNotification = [99FF99]Barrier[FFFFFF] Available!
+HealthFullError = [FF7766]Health[-] Full!
+NotHackableError = [FF7766]Firewall[-] Detected! Use [FF7766]Barriers[-]!
+
+AwaitingInput = Awaiting entry...
+
+//Hacking status
+CodeEncrypted = Code Encrypted
+Hacking = [FF6666]Hacking...
+
+
+
+
+//Self-Destruct Codes
+
+//Easy
+Space = space
+Moon = moon
+Mars = mars
+Sun = sun
+Venus = venus
+Earth = earth
+Ship = ship
+Vortex = vortex
+Water = water
+Fire = fire
+Star = star
+Void = void
+Pulsar = pulsar
+Hack = hack
+Sheldon = sheldon
+Cooper = cooper
+
+//Medium
+Saturn = saturn
+Uranus = uranus
+Mercury = mercury
+Jupiter = jupiter
+Lightning = lightning
+Processor = processor
+Magnesium = magnesium
+Nitrogen = nitrogen
+Silicon = silicon
+Chromium = chromium
+Barium = barium
+Hydrogen = hydrogen
+Uranium = uranium
+Oxygen = oxygen
+Neptune = neptune
+Starlight = starlight
+Leonard = leonard
+Wolowitz = wolowitz
+Spaceship = spaceship
+Sodium = sodium
+Radium = radium
+Nickel = nickel
+Silver = silver
+Xenon = xenon
+Radon = radon
+Lead = lead
+Argon = argon
+
+//Hard
+Microprocessor = microprocessor
+Motherboard = motherboard
+Neptunium = neptunium
+Lawrencium = lawrencium
+Seaborgium = seaborgium
+Dyspriosium = disprosium
+Lanthanum = lanthanum
+Mendelevium = mendelevium
+Einsteinium = einsteinium
+Phosphorous = phosphorus
+Gadolium = gadolinium
+
+//Very Hazrd
+Nitroglyceryn = nitroglycerine
+Ununquadium = ununquadium
+Rutherfordium = rutherfordium

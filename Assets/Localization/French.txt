@@ -1,0 +1,58 @@
+MainMenu = [AAFFFF]Menu Principal
+
+Bomb = [AAFFFF]Bombe
+BombTooltip = Détruit tous les ennemis d'un coup
+Time = [AAFFFF]Temps
+TimeTooltip = Ralentit le temps pour 10 secondes
+
+Powers = [AAFFFF]Power-Ups
+Available = [AAFFFF]Disponibles
+Selected = [AAFFFF]Sélectionné
+
+EnterName = Nom
+Nickname = [AAFFFF]Pseudo
+Difficulty = [AAFFFF]Difficulté
+Volume = [AAFFFF]Volume
+Sound = [AAFFFF]Son
+Enabled = Activé
+
+Play = Jouer
+Exit = Quitter
+Options = Options
+Language = [AAFFFF]Langue
+Ok = [22FF55]Ok
+Close = Fermer
+
+WelcomeMessage = [99FF99]Welcome![FFFFFF]\n\nVous pouvez choisir l'un des deux [AAFFFF]Power-Ups[FFFFFF] :\n[AAFFAA]Bombe[FFFFFF] : Détruit tous les ennemis d'un coup\n[AAFFAA]Temps[FFFFFF]: Ralentit le temps pour 10 sec
+
+Instructions = [22FF55]Glissez\nun Power-Up ici
+
+Normal = Normale
+Hard = Difficile
+
+English = English
+French = Français
+
+NicknameNotification = [AAFFFF]Merci d'entrer un [00FFAA]Pseudo[AAFFFF] avant de continuer !
+PowerNotification = [AAFFFF]Merci de sélectionner un [00FFAA]Power-Up[AAFFFF] avant de continuer !
+
+//Game
+Barrier = Barrière
+BuildingBarrier = [FF7766]Création...
+Wait = [FFBB22]Attendez
+
+BarrierAvailableNotification = [99FF99]Barrière[FFFFFF] Disponible !
+HealthFullError = [FF7766]Santé[-] au Maximum !
+NotHackableError = [FF7766]Pare-feu[-] Détecté ! Utilisez des [FF7766]Barrières[-] !
+
+AwaitingInput = En attente...
+
+//Hacking status
+CodeEncrypted = Code Crypté
+Hacking = [FF6666]Piratage...
+//Self-Destruct Codes
+Space = espace
+Neptune = neptune
+Moon = lune
+Mars = mars
+Jupiter = jupiter
