@@ -1,0 +1,5 @@
+keytool -genkey -v -keystore SpaceRunReleaseKey.keystore -alias SpaceRun -keyalg RSA -keysize 2048 -validity 10000 -storepass oldsnake
+
+jarsigner -verbose -sigalg MD5withRSA -digestalg SHA1 -keystore SpaceRunReleaseKey.keystore SpaceRun.apk spacerun
+
+zipalign -v 4 SpaceRun.apk SpaceRunFinal.apk
