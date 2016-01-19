@@ -31,7 +31,7 @@ public class ErrorManager : MonoBehaviour {
 		//Set the Localize key to Type + “Notification” 
 		loc.key = type.ToString() + "Error";
 		//Force Update the UILocalize with new key
-		loc.Localize();
+		//loc.Localize();
 	}
 	
 	public void Show(Type notificationType, float duration)

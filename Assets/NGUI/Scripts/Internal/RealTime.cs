@@ -1,6 +1,6 @@
 //----------------------------------------------
 //            NGUI: Next-Gen UI kit
-// Copyright © 2011-2013 Tasharen Entertainment
+// Copyright © 2011-2016 Tasharen Entertainment
 //----------------------------------------------
 
 using UnityEngine;
@@ -11,6 +11,7 @@ using UnityEngine;
 
 public class RealTime : MonoBehaviour
 {
+#if UNITY_4_3
 	static RealTime mInst;
 
 	float mRealTime = 0f;
@@ -24,9 +25,9 @@ public class RealTime : MonoBehaviour
 	{
 		get
 		{
-#if UNITY_EDITOR
+ #if UNITY_EDITOR
 			if (!Application.isPlaying) return Time.realtimeSinceStartup;
-#endif
+ #endif
 			if (mInst == null) Spawn();
 			return mInst.mRealTime;
 		}
@@ -40,9 +41,9 @@ public class RealTime : MonoBehaviour
 	{
 		get
 		{
-#if UNITY_EDITOR
+ #if UNITY_EDITOR
 			if (!Application.isPlaying) return 0f;
-#endif
+ #endif
 			if (mInst == null) Spawn();
 			return mInst.mRealDelta;
 		}
@@ -59,7 +60,20 @@ public class RealTime : MonoBehaviour
 	void Update ()
 	{
 		float rt = Time.realtimeSinceStartup;
-		mRealDelta = rt - mRealTime;
+		mRealDelta = Mathf.Clamp01(rt - mRealTime);
 		mRealTime = rt;
 	}
+#else
+	/// <summary>
+	/// Real time since startup.
+	/// </summary>
+
+	static public float time { get { return Time.unscaledTime; } }
+
+	/// <summary>
+	/// Real delta time.
+	/// </summary>
+
+	static public float deltaTime { get { return Time.unscaledDeltaTime; } }
+#endif
 }

@@ -18,7 +18,7 @@ public class TooltipManager : MonoBehaviour {
 	{
 		//If state is true, create a new Tooltip depending on the type
 		if(state)
-			UITooltip.ShowText(Localization.instance.Get(type.ToString() + "Tooltip"));
+			UITooltip.ShowText(Localization.Get(type.ToString() + "Tooltip"));
 		//If state is false, hide tooltip by setting an empty string
 		else
 			UITooltip.ShowText("");

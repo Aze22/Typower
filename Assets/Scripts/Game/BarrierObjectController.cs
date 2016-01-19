@@ -24,7 +24,7 @@ public class BarrierObjectController : MonoBehaviour {
 		//Get necessary components at Awake
 		button = GetComponentInChildren<UIButton>();
 		label = GetComponentInChildren<UILabel>();
-		label.text = Localization.instance.Get("Barrier");
+		label.text = Localization.Get("Barrier");
 		slider = GetComponentInChildren<UISlider>();
 		autoScrollThreshold.x = 0.92f;
 		autoScrollThreshold.y = 0.90f;
@@ -63,7 +63,7 @@ public class BarrierObjectController : MonoBehaviour {
 	{
 		//Deactivate the Barrier button and update Color to Disable
 		button.isEnabled = false;
-		button.UpdateColor(false, true);
+		button.UpdateColor(true);
 		slider.gameObject.SetActive(true);
 		StartCoroutine(FillSlider(cooldown));
 		currentCoolDown = cooldown;
@@ -72,7 +72,7 @@ public class BarrierObjectController : MonoBehaviour {
 		while(currentCoolDown > 0)
 		{
 			//Update Label with localized text each second
-			label.text = Localization.instance.Get("Wait") + " " + Mathf.CeilToInt(currentCoolDown).ToString() + "s";
+			label.text = Localization.Get("Wait") + " " + Mathf.CeilToInt(currentCoolDown).ToString() + "s";
 			currentCoolDown -= 1;
 			//Wait for a second, then return to start of While
 			yield return new WaitForSeconds(1);
@@ -80,7 +80,7 @@ public class BarrierObjectController : MonoBehaviour {
 
 		if(this != null && gameObject != null)
 		{
-			collider2D.enabled = false;
+			GetComponent<Collider2D>().enabled = false;
 			yield return null;
 		}
 
@@ -89,7 +89,7 @@ public class BarrierObjectController : MonoBehaviour {
 		yield return new WaitForSeconds(0.20f);
 		if(this != null && gameObject != null)
 		{
-			collider2D.enabled = true;
+			GetComponent<Collider2D>().enabled = true;
 			yield return null;
 		}
 	}
@@ -112,10 +112,10 @@ public class BarrierObjectController : MonoBehaviour {
 			cooldownFinished = true;
 			currentCoolDown = 0;
 			//Reset the Label's Text to "normal" Barrier
-			label.text = Localization.instance.Get("Barrier");
+			label.text = Localization.Get("Barrier");
 			//Reactivate the Barrier button and update Color to Normal
 			button.isEnabled = true;
-			button.UpdateColor(true, true);
+			button.UpdateColor(true);
 
 			//Debug.Log("FUCK");
 			//Set its scale to {0,0,0}
@@ -139,7 +139,7 @@ public class BarrierObjectController : MonoBehaviour {
 	void OnPress(bool pressed)
 	{
 		//Invert the Collider2D's state
-		collider2D.enabled = !pressed;
+		GetComponent<Collider2D>().enabled = !pressed;
 		
 		//If it has just been dropped
 		if(!pressed)
@@ -147,7 +147,7 @@ public class BarrierObjectController : MonoBehaviour {
 			dragging = false;
 			KeyboardScroll.instance.autoScroll = Vector2.zero;
 			//Get the target's collider2D
-			Collider2D col = UICamera.lastHit.collider;
+			Collider col = UICamera.lastHit.collider;
 			//If the target has no collider2D or is not the viewport
 			if(col == null || (col.GetComponent<ViewportHolder>() == null && col.GetComponent<Enemy>() == null && col.GetComponent<ActiveBarrierController>() == null && col.GetComponent<KeyController>() == null))
 			{
@@ -165,7 +165,7 @@ public class BarrierObjectController : MonoBehaviour {
 
 	public void UpdateCooldownLabel()
 	{
-		label.text = Localization.instance.Get("Wait") + " " + Mathf.CeilToInt(currentCoolDown).ToString() + "s";
+		label.text = Localization.Get("Wait") + " " + Mathf.CeilToInt(currentCoolDown).ToString() + "s";
 		if(currentCoolDown <= 0)
 		{
 			slider.gameObject.SetActive(false);

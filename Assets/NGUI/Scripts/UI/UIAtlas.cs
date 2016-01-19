@@ -1,6 +1,6 @@
 //----------------------------------------------
 //            NGUI: Next-Gen UI kit
-// Copyright © 2011-2013 Tasharen Entertainment
+// Copyright © 2011-2016 Tasharen Entertainment
 //----------------------------------------------
 
 using UnityEngine;
@@ -16,7 +16,7 @@ public class UIAtlas : MonoBehaviour
 {
 	// Legacy functionality, removed in 3.0. Do not use.
 	[System.Serializable]
-	public class Sprite
+	class Sprite
 	{
 		public string name = "Unity Bug";
 		public Rect outer = new Rect(0f, 0f, 1f, 1f);
@@ -61,6 +61,9 @@ public class UIAtlas : MonoBehaviour
 	// Whether the atlas is using a pre-multiplied alpha material. -1 = not checked. 0 = no. 1 = yes.
 	int mPMA = -1;
 
+	// Dictionary lookup to speed up sprite retrieval at run-time
+	Dictionary<string, int> mSpriteIndices = new Dictionary<string, int>();
+
 	/// <summary>
 	/// Material used by the atlas.
 	/// </summary>
@@ -86,10 +89,10 @@ public class UIAtlas : MonoBehaviour
 				}
 				else
 				{
-					MarkAsDirty();
+					MarkAsChanged();
 					mPMA = -1;
 					material = value;
-					MarkAsDirty();
+					MarkAsChanged();
 				}
 			}
 		}
@@ -122,8 +125,9 @@ public class UIAtlas : MonoBehaviour
 	{
 		get
 		{
+			if (mReplacement != null) return mReplacement.spriteList;
 			if (mSprites.Count == 0) Upgrade();
-			return (mReplacement != null) ? mReplacement.spriteList : mSprites;
+			return mSprites;
 		}
 		set
 		{
@@ -169,7 +173,7 @@ public class UIAtlas : MonoBehaviour
 				if (mPixelSize != val)
 				{
 					mPixelSize = val;
-					MarkAsDirty();
+					MarkAsChanged();
 				}
 			}
 		}
@@ -195,9 +199,10 @@ public class UIAtlas : MonoBehaviour
 			if (mReplacement != rep)
 			{
 				if (rep != null && rep.replacement == this) rep.replacement = null;
-				if (mReplacement != null) MarkAsDirty();
+				if (mReplacement != null) MarkAsChanged();
 				mReplacement = rep;
-				MarkAsDirty();
+				if (rep != null) material = null;
+				MarkAsChanged();
 			}
 		}
 	}
@@ -215,17 +220,87 @@ public class UIAtlas : MonoBehaviour
 		else if (!string.IsNullOrEmpty(name))
 		{
 			if (mSprites.Count == 0) Upgrade();
+			if (mSprites.Count == 0) return null;
 
+			// O(1) lookup via a dictionary
+#if UNITY_EDITOR
+			if (Application.isPlaying)
+#endif
+			{
+				// The number of indices differs from the sprite list? Rebuild the indices.
+				if (mSpriteIndices.Count != mSprites.Count)
+					MarkSpriteListAsChanged();
+
+				int index;
+				if (mSpriteIndices.TryGetValue(name, out index))
+				{
+					// If the sprite is present, return it as-is
+					if (index > -1 && index < mSprites.Count) return mSprites[index];
+
+					// The sprite index was out of range -- perhaps the sprite was removed? Rebuild the indices.
+					MarkSpriteListAsChanged();
+
+					// Try to look up the index again
+					return mSpriteIndices.TryGetValue(name, out index) ? mSprites[index] : null;
+				}
+			}
+
+			// Sequential O(N) lookup.
 			for (int i = 0, imax = mSprites.Count; i < imax; ++i)
 			{
 				UISpriteData s = mSprites[i];
 
 				// string.Equals doesn't seem to work with Flash export
 				if (!string.IsNullOrEmpty(s.name) && name == s.name)
+				{
+#if UNITY_EDITOR
+					if (!Application.isPlaying) return s;
+#endif
+					// If this point was reached then the sprite is present in the non-indexed list,
+					// so the sprite indices should be updated.
+					MarkSpriteListAsChanged();
 					return s;
+				}
 			}
 		}
 		return null;
+	}
+
+	/// <summary>
+	/// Convenience function that returns the name of a random sprite that begins with the specified value.
+	/// </summary>
+
+	public string GetRandomSprite (string startsWith)
+	{
+		if (GetSprite(startsWith) == null)
+		{
+			System.Collections.Generic.List<UISpriteData> sprites = spriteList;
+			System.Collections.Generic.List<string> choices = new System.Collections.Generic.List<string>();
+
+			foreach (UISpriteData sd in sprites)
+			{
+				if (sd.name.StartsWith(startsWith))
+					choices.Add(sd.name);
+			}
+			return (choices.Count > 0) ? choices[UnityEngine.Random.Range(0, choices.Count)] : null;
+		}
+		return startsWith;
+	}
+
+	/// <summary>
+	/// Rebuild the sprite indices. Call this after modifying the spriteList at run time.
+	/// </summary>
+
+	public void MarkSpriteListAsChanged ()
+	{
+#if UNITY_EDITOR
+		if (Application.isPlaying)
+#endif
+		{
+			mSpriteIndices.Clear();
+			for (int i = 0, imax = mSprites.Count; i < imax; ++i)
+				mSpriteIndices[mSprites[i].name] = i;
+		}
 	}
 
 	/// <summary>
@@ -236,7 +311,7 @@ public class UIAtlas : MonoBehaviour
 	{
 		mSprites.Sort(delegate(UISpriteData s1, UISpriteData s2) { return s1.name.CompareTo(s2.name); });
 #if UNITY_EDITOR
-		UnityEditor.EditorUtility.SetDirty(this);
+		NGUITools.SetDirty(this);
 #endif
 	}
 
@@ -265,7 +340,7 @@ public class UIAtlas : MonoBehaviour
 
 	public BetterList<string> GetListOfSprites (string match)
 	{
-		if (mReplacement != null) return mReplacement.GetListOfSprites(match);
+		if (mReplacement) return mReplacement.GetListOfSprites(match);
 		if (string.IsNullOrEmpty(match)) return GetListOfSprites();
 
 		if (mSprites.Count == 0) Upgrade();
@@ -332,12 +407,12 @@ public class UIAtlas : MonoBehaviour
 	/// Mark all widgets associated with this atlas as having changed.
 	/// </summary>
 
-	public void MarkAsDirty ()
+	public void MarkAsChanged ()
 	{
 #if UNITY_EDITOR
-		UnityEditor.EditorUtility.SetDirty(gameObject);
+		NGUITools.SetDirty(gameObject);
 #endif
-		if (mReplacement != null) mReplacement.MarkAsDirty();
+		if (mReplacement != null) mReplacement.MarkAsChanged();
 
 		UISprite[] list = NGUITools.FindActive<UISprite>();
 
@@ -351,7 +426,7 @@ public class UIAtlas : MonoBehaviour
 				sp.atlas = null;
 				sp.atlas = atl;
 #if UNITY_EDITOR
-				UnityEditor.EditorUtility.SetDirty(sp);
+				NGUITools.SetDirty(sp);
 #endif
 			}
 		}
@@ -368,7 +443,7 @@ public class UIAtlas : MonoBehaviour
 				font.atlas = null;
 				font.atlas = atl;
 #if UNITY_EDITOR
-				UnityEditor.EditorUtility.SetDirty(font);
+				NGUITools.SetDirty(font);
 #endif
 			}
 		}
@@ -379,13 +454,13 @@ public class UIAtlas : MonoBehaviour
 		{
 			UILabel lbl = labels[i];
 
-			if (lbl.font != null && CheckIfRelated(this, lbl.font.atlas))
+			if (lbl.bitmapFont != null && CheckIfRelated(this, lbl.bitmapFont.atlas))
 			{
-				UIFont font = lbl.font;
-				lbl.font = null;
-				lbl.font = font;
+				UIFont font = lbl.bitmapFont;
+				lbl.bitmapFont = null;
+				lbl.bitmapFont = font;
 #if UNITY_EDITOR
-				UnityEditor.EditorUtility.SetDirty(lbl);
+				NGUITools.SetDirty(lbl);
 #endif
 			}
 		}
@@ -397,7 +472,9 @@ public class UIAtlas : MonoBehaviour
 
 	bool Upgrade ()
 	{
-		if (mSprites.Count == 0 && sprites.Count > 0)
+		if (mReplacement) return mReplacement.Upgrade();
+
+		if (mSprites.Count == 0 && sprites.Count > 0 && material)
 		{
 			Texture tex = material.mainTexture;
 			int width = (tex != null) ? tex.width : 512;
@@ -437,7 +514,7 @@ public class UIAtlas : MonoBehaviour
 			}
 			sprites.Clear();
 #if UNITY_EDITOR
-			UnityEditor.EditorUtility.SetDirty(this);
+			NGUITools.SetDirty(this);
 			UnityEditor.AssetDatabase.SaveAssets();
 #endif
 			return true;

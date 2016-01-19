@@ -1,6 +1,6 @@
 //----------------------------------------------
 //            NGUI: Next-Gen UI kit
-// Copyright © 2011-2013 Tasharen Entertainment
+// Copyright © 2011-2016 Tasharen Entertainment
 //----------------------------------------------
 
 using UnityEngine;
@@ -9,16 +9,12 @@ using UnityEngine;
 /// Tween the audio source's volume.
 /// </summary>
 
+[RequireComponent(typeof(AudioSource))]
 [AddComponentMenu("NGUI/Tween/Tween Volume")]
 public class TweenVolume : UITweener
 {
-#if UNITY_3_5
-	public float from = 1f;
-	public float to = 1f;
-#else
 	[Range(0f, 1f)] public float from = 1f;
 	[Range(0f, 1f)] public float to = 1f;
-#endif
 
 	AudioSource mSource;
 
@@ -32,11 +28,11 @@ public class TweenVolume : UITweener
 		{
 			if (mSource == null)
 			{
-				mSource = audio;
+				mSource = GetComponent<AudioSource>();
 				
 				if (mSource == null)
 				{
-					mSource = GetComponentInChildren<AudioSource>();
+					mSource = GetComponent<AudioSource>();
 
 					if (mSource == null)
 					{
@@ -49,11 +45,14 @@ public class TweenVolume : UITweener
 		}
 	}
 
+	[System.Obsolete("Use 'value' instead")]
+	public float volume { get { return this.value; } set { this.value = value; } }
+
 	/// <summary>
 	/// Audio source's current volume.
 	/// </summary>
 
-	public float volume
+	public float value
 	{
 		get
 		{
@@ -65,13 +64,9 @@ public class TweenVolume : UITweener
 		}
 	}
 
-	/// <summary>
-	/// Tween update function.
-	/// </summary>
-
 	protected override void OnUpdate (float factor, bool isFinished)
 	{
-		volume = from * (1f - factor) + to * factor;
+		value = from * (1f - factor) + to * factor;
 		mSource.enabled = (mSource.volume > 0.01f);
 	}
 
@@ -82,14 +77,17 @@ public class TweenVolume : UITweener
 	static public TweenVolume Begin (GameObject go, float duration, float targetVolume)
 	{
 		TweenVolume comp = UITweener.Begin<TweenVolume>(go, duration);
-		comp.from = comp.volume;
+		comp.from = comp.value;
 		comp.to = targetVolume;
 
-		if (duration <= 0f)
+		if (targetVolume > 0f)
 		{
-			comp.Sample(1f, true);
-			comp.enabled = false;
+			comp.audioSource.enabled = true;
+			comp.audioSource.Play();
 		}
 		return comp;
 	}
+
+	public override void SetStartToCurrentValue () { from = value; }
+	public override void SetEndToCurrentValue () { to = value; }
 }

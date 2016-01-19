@@ -1,8 +1,8 @@
-Shader "Unlit/Transparent Colored (Packed)"
+Shader "Unlit/Transparent Packed"
 {
 	Properties
 	{
-		_MainTex ("Base (RGB), Alpha (A)", 2D) = "white" {}
+		_MainTex ("Base (RGB), Alpha (A)", 2D) = "black" {}
 	}
 
 	SubShader
@@ -49,9 +49,10 @@ Shader "Unlit/Transparent Colored (Packed)"
 				float2 texcoord : TEXCOORD0;
 			};
 
+			v2f o;
+
 			v2f vert (appdata_t v)
 			{
-				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.color = v.color;
 				o.texcoord = v.texcoord;

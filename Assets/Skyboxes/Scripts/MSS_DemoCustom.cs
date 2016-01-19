@@ -30,7 +30,7 @@ public class MSS_DemoCustom : MonoBehaviour {
 		SetCustomSkybox(_skybox);
 		
 		// Hide the mouse pointer
-		Screen.showCursor = false;
+		Cursor.visible = false;
 	}
 	
 	void Update () {
@@ -61,7 +61,7 @@ public class MSS_DemoCustom : MonoBehaviour {
 	
 	void SetCustomSkybox(int _index) {
 		// Change the material of the game object to the new material
-		gameObject.renderer.material = materials[_index];
+		gameObject.GetComponent<Renderer>().material = materials[_index];
 		// Update the GUI texture
 		_guiText.text = "Skybox (Left / Right Arrow): " + (_index+1);
 	}

@@ -1,69 +1,84 @@
 //----------------------------------------------
 //            NGUI: Next-Gen UI kit
-// Copyright © 2011-2013 Tasharen Entertainment
+// Copyright © 2011-2016 Tasharen Entertainment
 //----------------------------------------------
 
 using UnityEngine;
 using UnityEditor;
 
-[CustomEditor(typeof(UIScrollBar))]
-public class UIScrollBarInspector : UIWidgetContainerEditor
+[CanEditMultipleObjects]
+#if UNITY_3_5
+[CustomEditor(typeof(UIProgressBar))]
+#else
+[CustomEditor(typeof(UIProgressBar), true)]
+#endif
+public class UIProgressBarEditor : UIWidgetContainerEditor
 {
 	public override void OnInspectorGUI ()
 	{
 		NGUIEditorTools.SetLabelWidth(80f);
-		UIScrollBar sb = target as UIScrollBar;
+
+		serializedObject.Update();
 
 		GUILayout.Space(3f);
 
-		float val = EditorGUILayout.Slider("Value", sb.value, 0f, 1f);
-		float size = EditorGUILayout.Slider("Size", sb.barSize, 0f, 1f);
-		float alpha = EditorGUILayout.Slider("Alpha", sb.alpha, 0f, 1f);
+		DrawLegacyFields();
 
-		UISprite bg = sb.background;
-		UISprite fg = sb.foreground;
-		bool inv = sb.inverted;
-		UIScrollBar.Direction dir = sb.direction;
+		GUILayout.BeginHorizontal();
+		SerializedProperty sp = NGUIEditorTools.DrawProperty("Steps", serializedObject, "numberOfSteps", GUILayout.Width(110f));
+		if (sp.intValue == 0) GUILayout.Label("= unlimited");
+		GUILayout.EndHorizontal();
 
-		//GUILayout.Space(6f);
+		OnDrawExtraFields();
 
-		if (NGUIEditorTools.DrawHeader("Appearance"))
+		if (NGUIEditorTools.DrawHeader("Appearance", "Appearance", false, true))
 		{
-			NGUIEditorTools.BeginContents();
-			bg = (UISprite)EditorGUILayout.ObjectField("Background", sb.background, typeof(UISprite), true);
-			fg = (UISprite)EditorGUILayout.ObjectField("Foreground", sb.foreground, typeof(UISprite), true);
+			NGUIEditorTools.BeginContents(true);
+			NGUIEditorTools.DrawProperty("Foreground", serializedObject, "mFG");
+			NGUIEditorTools.DrawProperty("Background", serializedObject, "mBG");
+			NGUIEditorTools.DrawProperty("Thumb", serializedObject, "thumb");
 
 			GUILayout.BeginHorizontal();
-			dir = (UIScrollBar.Direction)EditorGUILayout.EnumPopup("Direction", sb.direction);
-			GUILayout.Space(18f);
+			NGUIEditorTools.DrawProperty("Direction", serializedObject, "mFill");
+			NGUIEditorTools.DrawPadding();
 			GUILayout.EndHorizontal();
 
-			inv = EditorGUILayout.Toggle("Inverted", sb.inverted);
-
+			OnDrawAppearance();
 			NGUIEditorTools.EndContents();
 		}
 
-		//GUILayout.Space(3f);
+		UIProgressBar sb = target as UIProgressBar;
+		NGUIEditorTools.DrawEvents("On Value Change", sb, sb.onChange);
+		serializedObject.ApplyModifiedProperties();
+	}
+
+	protected virtual void DrawLegacyFields()
+	{
+		UIProgressBar sb = target as UIProgressBar;
+		float val = EditorGUILayout.Slider("Value", sb.value, 0f, 1f);
+		float alpha = EditorGUILayout.Slider("Alpha", sb.alpha, 0f, 1f);
 
 		if (sb.value != val ||
-			sb.barSize != size ||
-			sb.background != bg ||
-			sb.foreground != fg ||
-			sb.direction != dir ||
-			sb.inverted != inv ||
 			sb.alpha != alpha)
 		{
-			NGUIEditorTools.RegisterUndo("Scroll Bar Change", sb);
+			NGUIEditorTools.RegisterUndo("Progress Bar Change", sb);
 			sb.value = val;
-			sb.barSize = size;
-			sb.inverted = inv;
-			sb.background = bg;
-			sb.foreground = fg;
-			sb.direction = dir;
 			sb.alpha = alpha;
-			UnityEditor.EditorUtility.SetDirty(sb);
-		}
+			NGUITools.SetDirty(sb);
 
-		NGUIEditorTools.DrawEvents("On Value Change", sb, sb.onChange);
+			for (int i = 0; i < UIScrollView.list.size; ++i)
+			{
+				UIScrollView sv = UIScrollView.list[i];
+
+				if (sv.horizontalScrollBar == sb || sv.verticalScrollBar == sb)
+				{
+					NGUIEditorTools.RegisterUndo("Progress Bar Change", sv);
+					sv.UpdatePosition();
+				}
+			}
+		}
 	}
+
+	protected virtual void OnDrawExtraFields () { }
+	protected virtual void OnDrawAppearance () { }
 }

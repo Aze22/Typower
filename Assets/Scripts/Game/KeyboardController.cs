@@ -14,7 +14,7 @@ public class KeyboardController : MonoBehaviour {
 		line2 = transform.FindChild("Holder/Line2Container/Line2");
 		line3 = transform.FindChild("Holder/Line3Container/Line3");
 		holder = transform.FindChild("Holder").gameObject;
-		currentLanguage = Localization.instance.currentLanguage;
+		currentLanguage = Localization.language;
 		ChangeLanguage(currentLanguage);
 		holder.SetActive(false);
 	}

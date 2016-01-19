@@ -147,7 +147,7 @@ public class Enemy : MonoBehaviour {
 		//Tween for smooth disappearance
 		TweenScale.Begin(gameObject, 0.2f, Vector3.zero);
 		//Deactivate the collider2D now
-		collider2D.enabled = false;
+		GetComponent<Collider2D>().enabled = false;
 		//Wait end of tween, then destroy the enemy
 		yield return new WaitForSeconds(0.2f);
 		//Remove enemy from the List
@@ -170,9 +170,9 @@ public class Enemy : MonoBehaviour {
 		if(hackable && randomWordKey != "")
 		{
 			//... Get the corresponding localized code
-			destructCode = Localization.instance.Get(randomWordKey);
+			destructCode = Localization.Get(randomWordKey);
 			//Set the Label to "Code Encrypted" 
-			codeLabel.text = Localization.instance.Get("CodeEncrypted");
+			codeLabel.text = Localization.Get("CodeEncrypted");
 			//Activate button
 			button.enabled = true;
 		}
@@ -180,7 +180,7 @@ public class Enemy : MonoBehaviour {
 		else
 		{
 			hackSlider.gameObject.SetActive(false);
-			sprite.collider2D.enabled = false;
+			sprite.GetComponent<Collider2D>().enabled = false;
 		}
 	}
 	
@@ -198,7 +198,7 @@ public class Enemy : MonoBehaviour {
 	IEnumerator Hack()
 	{
 		//Set the Label to "Hacking..."
-		codeLabel.text = Localization.instance.Get("Hacking");
+		codeLabel.text = Localization.Get("Hacking");
 		//While hacking slider is not full
 		while(hackSlider.value < 1)
 		{

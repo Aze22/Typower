@@ -38,10 +38,10 @@ public class ActiveBarrierController : MonoBehaviour {
 		slider.value = 1;
 		//Set the key to "normal" barrier and update Localization
 		loc.key = "Barrier";
-		loc.Localize();
+		//loc.Localize();
 		//Set the build value to true and activate collider2D
 		built = true;
-		collider2D.enabled = true;
+		GetComponent<Collider2D>().enabled = true;
 
 		//Inform viewport
 		ViewportHolder.instance.BarrierAdded();
@@ -53,7 +53,7 @@ public class ActiveBarrierController : MonoBehaviour {
 		if(!built) return;
 		//Else, kill the enemy
 		enemy.Hit(1);
-		collider2D.enabled = false;
+		GetComponent<Collider2D>().enabled = false;
 		//Kill the barrier too
 		StartCoroutine(RemoveBarrier());
 	}
@@ -71,7 +71,7 @@ public class ActiveBarrierController : MonoBehaviour {
 
 	void OnClick()
 	{
-		collider2D.enabled = false;
+		GetComponent<Collider2D>().enabled = false;
 		//Kill the barrier too
 		StartCoroutine(RemoveBarrier());
 	}

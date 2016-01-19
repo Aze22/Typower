@@ -28,7 +28,8 @@ public class UIInputValidator : MonoBehaviour
 	/// Assign the validator.
 	/// </summary>
 
-	void Start () { GetComponent<UIInput>().validator = Validate; }
+	void Start () { //GetComponent<UIInput>().validation = Validate();
+	}
 
 	/// <summary>
 	/// Validate the specified input.

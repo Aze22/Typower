@@ -9,12 +9,12 @@ public class DragItem : MonoBehaviour {
 	void OnPress(bool pressed)
 	{
 		//Invert the collider2D's state
-		collider2D.enabled = !pressed;
+		GetComponent<Collider2D>().enabled = !pressed;
 		//If the Item is released
 		if(!pressed)
 		{
 			//Get the last hit collider2D
-			Collider2D col = UICamera.lastHit.collider;
+			Collider col = UICamera.lastHit.collider;
 			//If there is no collider2D, or no DropSurface behind the Power
 			if(col == null || col.GetComponent<DropSurface>() == null)
 			{

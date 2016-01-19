@@ -31,7 +31,7 @@ public class MSS_Demo : MonoBehaviour {
 		SetSkybox(_skybox);
 		
 		// Hide the mouse pointer
-		Screen.showCursor = false;
+		Cursor.visible = false;
 	}
 	
 	void Update () {

@@ -178,7 +178,7 @@ public class EnemySpawnController : MonoBehaviour {
 		StartCoroutine(SpawnEnemy(firstEnemyDelay));
 
 		//Initialize Input Label
-		inputLabel.text = /*Localization.instance.Get("AwaitingInput")*/"";
+		inputLabel.text = /*Localization.Get("AwaitingInput")*/"";
 	}
 	
 	void Update()
@@ -203,7 +203,7 @@ public class EnemySpawnController : MonoBehaviour {
 					if(currentWord.Contains(enemy.destructCode))
 					{
 						//Yes - Destroy it and update our bool
-						if(enemy.collider2D.enabled) 
+						if(enemy.GetComponent<Collider2D>().enabled) 
 						{
 							enemy.score += hackKillBonus;
 							StartCoroutine(enemy.Kill());

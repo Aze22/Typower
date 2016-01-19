@@ -17,7 +17,7 @@ public class KeyController : MonoBehaviour {
 
 		if(!string.IsNullOrEmpty(french) && french != "Delete" && english != "Delete")
 		{
-			if(Localization.instance.currentLanguage == "French")
+			if(Localization.language == "French")
 			{
 				if(french == "-1") gameObject.SetActive(false);
 				label.text = french;

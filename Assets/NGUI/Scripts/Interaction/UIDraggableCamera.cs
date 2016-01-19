@@ -1,6 +1,6 @@
 //----------------------------------------------
 //            NGUI: Next-Gen UI kit
-// Copyright © 2011-2013 Tasharen Entertainment
+// Copyright © 2011-2016 Tasharen Entertainment
 //----------------------------------------------
 
 using UnityEngine;
@@ -65,13 +65,14 @@ public class UIDraggableCamera : MonoBehaviour
 	public Vector2 currentMomentum { get { return mMomentum; } set { mMomentum = value; } }
 
 	/// <summary>
-	/// Cache the common components.
+	/// Cache the root.
 	/// </summary>
 
-	void Awake ()
+	void Start ()
 	{
-		mCam = camera;
+		mCam = GetComponent<Camera>();
 		mTrans = transform;
+		mRoot = NGUITools.FindInParents<UIRoot>(gameObject);
 
 		if (rootForBounds == null)
 		{
@@ -79,12 +80,6 @@ public class UIDraggableCamera : MonoBehaviour
 			enabled = false;
 		}
 	}
-
-	/// <summary>
-	/// Cache the root.
-	/// </summary>
-
-	void Start () { mRoot = NGUITools.FindInParents<UIRoot>(gameObject); }
 
 	/// <summary>
 	/// Calculate the offset needed to be constrained within the panel's bounds.
@@ -116,7 +111,7 @@ public class UIDraggableCamera : MonoBehaviour
 		{
 			Vector3 offset = CalculateConstrainOffset();
 
-			if (offset.magnitude > 0f)
+			if (offset.sqrMagnitude > 0f)
 			{
 				if (immediate)
 				{
